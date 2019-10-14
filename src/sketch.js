@@ -1,6 +1,14 @@
 var framerate = 60; // Amount of refreshes per second. Standard is 60.
+var ismobile = false;
 function setup() {
   frameRate(framerate);
+  if (
+    /Android|webOS|iPhone|iPad|iPod|BlackBerry|BB|PlayBook|IEMobile|Windows Phone|Kindle|Silk|Opera Mini/i.test(
+      navigator.userAgent
+    )
+  ) {
+    ismobile = true;
+  }
   createCanvas(windowWidth, windowHeight); // Feel free to change these values.
 }
 var devmode = false; // press f1 to toggle this
@@ -40,6 +48,7 @@ function draw() {
       text("Jump Combo: " + jumpCombo, 50, 80);
     }
     text("FPS: " + framerate, 50, 90);
+    text("Is Mobile? " + ismobile, 50, 100);
   } else {
     text("Press f1 to toggle stats", 50, 50);
   }
@@ -76,8 +85,9 @@ function draw() {
   }
 }
 function touchStarted() {
-  jump();
-  return false;
+  if (ismobile) {
+    jump();
+  }
 }
 function keyPressed() {
   if (keyCode === 32 || keyCode === 87 || keyCode === 38) {
