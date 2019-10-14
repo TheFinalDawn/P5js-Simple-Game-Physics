@@ -3,6 +3,7 @@ function setup() {
   frameRate(framerate);
   createCanvas(windowWidth, windowHeight); // Feel free to change these values.
 }
+var devmode = false; // press f1 to toggle this
 /* PLAY WITH THESE VALUES */
 var jumpAmount = 20; // how many jumps you can perform midair
 var jumpCombo = 0; // How many jumps the player has made since touching the ground
@@ -19,26 +20,29 @@ var doubleJump = false; // Whether or not the box can jump midair.
 function draw() {
   background(220);
   rect(x, y, 100, 100);
-  if (fallspeed === 0) {
-    text("Falling/Upward Speed: " + fallspeed, 50, 50);
-  } else if (fallspeed > 0) {
-    text("Falling Speed: " + fallspeed, 50, 50);
-  } else if (fallspeed < 0) {
-    text("Upward Speed: " + -fallspeed, 50, 50);
+  if (devmode === true) {
+    if (fallspeed === 0) {
+      text("Falling/Upward Speed: " + fallspeed, 50, 50);
+    } else if (fallspeed > 0) {
+      text("Falling Speed: " + fallspeed, 50, 50);
+    } else if (fallspeed < 0) {
+      text("Upward Speed: " + -fallspeed, 50, 50);
+    } else {
+      text("Speed broke. Value:" + fallspeed, 50, 50);
+    }
+    text("Y: " + y, 50, 60);
+    text("X: " + x, 50, 70);
+    if (jumpCombo >= jumpAmount) {
+      text("Jump Combo: " + jumpCombo + "!", 50, 80);
+    } else if (jumpCombo < 0) {
+      text("Jump Combo: " + jumpCombo + "?", 50, 80);
+    } else {
+      text("Jump Combo: " + jumpCombo, 50, 80);
+    }
+    text("FPS: " + framerate, 50, 90);
   } else {
-    text("Speed broke. Value:" + fallspeed, 50, 50);
+    text("Press f1 to toggle stats", 50, 50);
   }
-  text("Y: " + y, 50, 60);
-  text("X: " + x, 50, 70);
-  if (jumpCombo >= jumpAmount) {
-    text("Jump Combo: " + jumpCombo + "!", 50, 80);
-  } else if (jumpCombo < 0) {
-    text("Jump Combo: " + jumpCombo + "?", 50, 80);
-  } else {
-    text("Jump Combo: " + jumpCombo, 50, 80);
-  }
-  text(width, 50, 100);
-  text("FPS: " + framerate, 50, 90);
   if (y <= height - 102) {
     fallspeed += accel;
     y += fallspeed;
@@ -71,19 +75,13 @@ function draw() {
     fallspeed = -inv / 2;
   }
 }
+function touchStarted() {
+  jump();
+  return false;
+}
 function keyPressed() {
   if (keyCode === 32 || keyCode === 87 || keyCode === 38) {
-    if (y === height - 100) {
-      fallspeed = -jumpPower;
-      y += fallspeed;
-      jumpCombo++;
-    } else {
-      if (doubleJump === false) {
-        fallspeed = -jumpPower;
-        y += fallspeed;
-        jumpCombo++;
-      }
-    }
+    jump();
   }
   if (keyCode === 65 || keyCode === 37) {
     mvLeft = true;
@@ -92,6 +90,9 @@ function keyPressed() {
   if (keyCode === 68 || keyCode === 39) {
     mvRight = true;
     mvLeft = false;
+  }
+  if (keyCode === 112) {
+    devmode = !devmode;
   }
   return false;
 }
@@ -105,4 +106,17 @@ function keyReleased() {
     }
   }
   return false;
+}
+function jump() {
+  if (y === height - 100) {
+    fallspeed = -jumpPower;
+    y += fallspeed;
+    jumpCombo++;
+  } else {
+    if (doubleJump === false) {
+      fallspeed = -jumpPower;
+      y += fallspeed;
+      jumpCombo++;
+    }
+  }
 }
